@@ -1,0 +1,134 @@
+Life Calendar Specification (v0.2)
+
+1. Overview
+- App name: Life Calendar
+- Goal: visualize life in weeks so remaining time and current position are easy to grasp at a glance
+- Concept:
+  - prioritize visual clarity over dense information
+  - favor calm awareness over pressure
+  - keep the app light enough to revisit every day
+
+2. Target Platforms
+- iOS / Android with Expo / React Native
+- Initial release uses local-only persistence
+
+3. Current Functional Requirements
+3.1 Onboarding
+- Birth date input
+- Life expectancy input
+- Total-week preview
+- Local persistence after onboarding completion
+
+3.2 Main Screen
+- Settings button in the top-right corner
+- View mode switch at the top
+  - `Life`: show the entire lifespan as a 52-column by N-year weekly grid
+  - `Year`: show one year broken into month rows
+- Remaining weeks and a progress meter at the bottom
+
+3.3 Life Mode
+- 1 cell = 1 week
+- Row labels represent age years
+- Every 10th year label is emphasized
+- Four visual states:
+  - past
+  - current
+  - future
+  - memo
+- Weeks with memos change the cell color itself
+- Week selection is inferred from a tap on the year row
+- Selected weeks open a bottom modal with details
+
+3.4 Year Mode
+- The selected year is shown as 12 vertical month rows
+- Each month shows 4 to 5 week blocks in a single row
+- Previous / next year navigation is available
+- Tapping a block opens the existing week modal
+
+3.5 Weekly Memos
+- Text memo per week
+- Maximum 200 characters
+- Saving closes the modal
+- Saving empty text deletes the memo
+
+3.6 Settings
+- Birth date
+- Life expectancy
+- Theme
+- Language
+- Changes apply immediately without a save button
+
+3.7 Languages
+- Japanese
+- English
+- Chinese
+- Spanish
+- Hindi
+
+4. Data Persistence
+4.1 User Settings
+```json
+{
+  "birthDate": "1990-01-01",
+  "language": "ja",
+  "lifeExpectancy": 80,
+  "selectedCalendarYear": 2026,
+  "theme": "light",
+  "viewMode": "life"
+}
+```
+
+4.2 Weekly Memos
+```json
+{
+  "1234": "Went on a trip"
+}
+```
+
+5. Screen Structure
+5.1 Splash
+- Title
+- Simple icon
+- Load saved settings
+
+5.2 Onboarding
+- Birth date
+- Life expectancy
+- Estimated total weeks
+- Start button
+
+5.3 Main Screen
+- Header: title and settings button
+- View switch: `Life / Year`
+- Main content: `Life` or `Year`
+- Footer: `Left` and progress bar
+
+5.4 Week Detail Modal
+- Top handle
+- Week title
+- Date range
+- Previous / next week navigation
+- Memo input
+- Memo save action
+
+5.5 Settings Screen
+- Back button
+- Display section
+  - Theme
+  - Language
+- Life section
+  - Birth date
+  - Life expectancy
+
+6. Design Principles
+- Keep borders minimal
+- Prioritize grid legibility
+- Information priority is `current position -> remaining weeks -> overall view`
+- Preserve clear distinction between `past / current / future / memo` in both light and dark modes
+- If touch targets become too small, move precision work into a supporting view or UI
+
+7. Future Extensions
+- Memo list screen
+- Event-week markers
+- Month labels in Year mode
+- Data export / backup
