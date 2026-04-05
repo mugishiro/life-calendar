@@ -24,7 +24,12 @@
       "predictiveBackGestureEnabled": false
     },
     "web": {
+      "bundler": "metro",
+      "output": "single",
       "favicon": "./assets/favicon.png"
+    },
+    "experiments": {
+      "baseUrl": "/life-calendar"
     },
     "plugins": [
       "@react-native-community/datetimepicker"

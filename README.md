@@ -25,7 +25,38 @@ To test with Expo Go:
 ```bash
 npm run typecheck
 npm test
+npm run build:web
 ```
+
+## Publish To GitHub Pages
+
+This repository is already connected to `git@github.com:mugishiro/life-calendar.git`, so the web app can be published with GitHub Pages.
+
+1. Install dependencies.
+
+```bash
+npm install
+```
+
+2. Generate and deploy the production web build.
+
+```bash
+npm run deploy
+```
+
+3. In the GitHub repository settings, open `Pages` and set:
+
+- Source: `Deploy from a branch`
+- Branch: `gh-pages`
+- Folder: `/ (root)`
+
+After that, the app will be available at:
+
+```text
+https://mugishiro.github.io/life-calendar/
+```
+
+The Expo app config already sets `baseUrl` to `/life-calendar`, which is required for a project site hosted under GitHub Pages.
 
 ## MVP Scope
 
