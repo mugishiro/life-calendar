@@ -2,6 +2,7 @@
   "expo": {
     "name": "Life Calendar",
     "slug": "life-calendar",
+    "scheme": "lifecalendar",
     "version": "0.1.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -13,7 +14,11 @@
       "backgroundColor": "#f4efe6"
     },
     "ios": {
-      "supportsTablet": true
+      "bundleIdentifier": "com.mugishiro.lifecalendar",
+      "supportsTablet": true,
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -32,7 +37,13 @@
       "baseUrl": "/life-calendar"
     },
     "plugins": [
+      "expo-dev-client",
       "@react-native-community/datetimepicker"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "415a2ff0-1a9b-4a68-84b7-f89227ab1645"
+      }
+    }
   }
 }
