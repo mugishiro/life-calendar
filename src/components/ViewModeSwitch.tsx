@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { getTranslations } from '../i18n';
 import type { AppTheme } from '../theme';
 import type { LanguageCode, ViewMode } from '../types';
+import { VIEW_MODES } from '../utils/viewMode';
 
 interface ViewModeSwitchProps {
   language: LanguageCode;
@@ -10,8 +11,6 @@ interface ViewModeSwitchProps {
   theme: AppTheme;
   value: ViewMode;
 }
-
-const MODES: ViewMode[] = ['life', 'year'];
 
 export function ViewModeSwitch({
   language,
@@ -21,7 +20,7 @@ export function ViewModeSwitch({
 }: ViewModeSwitchProps) {
   const t = getTranslations(language);
   const labels: Record<ViewMode, string> = {
-    life: t.mainModeLife,
+    life: t.mainModeReal,
     year: t.mainModeYear,
   };
 
@@ -34,7 +33,7 @@ export function ViewModeSwitch({
         },
       ]}
     >
-      {MODES.map((mode) => {
+      {VIEW_MODES.map((mode) => {
         const selected = mode === value;
         return (
           <Pressable

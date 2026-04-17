@@ -15,6 +15,22 @@ export interface LifeStats {
   currentYearIndex: number;
 }
 
+export interface FeltStats {
+  totalWeight: number;
+  elapsedWeight: number;
+  remainingWeight: number;
+  progressPercent: number;
+  currentWeekIndex: number;
+  currentYearIndex: number;
+}
+
+export interface FeltTimelineCell {
+  ageYear: number;
+  endWeekIndex: number;
+  representativeWeekIndex: number;
+  startWeekIndex: number;
+}
+
 export interface WeekDetail {
   ageYear: number;
   elapsedWeeks: number;
@@ -49,6 +65,16 @@ function endOfYear(year: number) {
 
 function addDays(date: Date, days: number) {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate() + days);
+}
+
+function getHarmonicSum(count: number) {
+  let total = 0;
+
+  for (let index = 1; index <= count; index += 1) {
+    total += 1 / index;
+  }
+
+  return total;
 }
 
 export function isValidLifeExpectancy(value: number) {
@@ -139,6 +165,133 @@ export function getLifeStats(
     progressPercent: totalWeeks === 0 ? 0 : Math.min((elapsedWeeks / totalWeeks) * 100, 100),
     currentWeekIndex,
     currentYearIndex,
+  };
+}
+
+export function getFeltWeekWeight(weekIndex: number) {
+  if (!Number.isInteger(weekIndex) || weekIndex < 0) {
+    return 0;
+  }
+
+  return 1 / (Math.floor(weekIndex / 52) + 1);
+}
+
+export function getFeltYearCellCounts(
+  lifeExpectancy: number,
+  requestedCellCount: number,
+) {
+  if (
+    !isValidLifeExpectancy(lifeExpectancy) ||
+    !Number.isFinite(requestedCellCount) ||
+    requestedCellCount < 1
+  ) {
+    return [];
+  }
+
+  const totalWeeks = lifeExpectancy * 52;
+  const totalCellCount = Math.max(1, Math.min(totalWeeks, Math.floor(requestedCellCount)));
+  const counts = Array.from({ length: lifeExpectancy }, () => 0);
+  let allocatedCount = 0;
+
+  while (allocatedCount < totalCellCount) {
+    let bestAgeYear = -1;
+    let bestPriority = -1;
+
+    for (let ageYear = 0; ageYear < lifeExpectancy; ageYear += 1) {
+      if (counts[ageYear] >= 52) {
+        continue;
+      }
+
+      const priority = (1 / (ageYear + 1)) / (counts[ageYear] + 1);
+
+      if (priority > bestPriority) {
+        bestPriority = priority;
+        bestAgeYear = ageYear;
+      }
+    }
+
+    if (bestAgeYear === -1) {
+      break;
+    }
+
+    counts[bestAgeYear] += 1;
+    allocatedCount += 1;
+  }
+
+  return counts;
+}
+
+export function getFeltTimelineCells(
+  lifeExpectancy: number,
+  requestedCellCount: number,
+): FeltTimelineCell[] {
+  if (
+    !isValidLifeExpectancy(lifeExpectancy) ||
+    !Number.isFinite(requestedCellCount) ||
+    requestedCellCount < 1
+  ) {
+    return [];
+  }
+
+  const yearCellCounts = getFeltYearCellCounts(lifeExpectancy, requestedCellCount);
+  const cells: FeltTimelineCell[] = [];
+
+  for (let ageYear = 0; ageYear < yearCellCounts.length; ageYear += 1) {
+    const yearStartWeekIndex = ageYear * 52;
+    const yearCellCount = yearCellCounts[ageYear] ?? 0;
+
+    for (let cellIndex = 0; cellIndex < yearCellCount; cellIndex += 1) {
+      const startWeekOfYear = Math.floor((cellIndex * 52) / yearCellCount);
+      const nextStartWeekOfYear = Math.floor(((cellIndex + 1) * 52) / yearCellCount);
+      const startWeekIndex = yearStartWeekIndex + startWeekOfYear;
+      const endWeekIndex = yearStartWeekIndex + Math.max(startWeekOfYear, nextStartWeekOfYear - 1);
+      const representativeWeekIndex =
+        startWeekIndex + Math.floor((endWeekIndex - startWeekIndex) / 2);
+
+      cells.push({
+        ageYear,
+        endWeekIndex,
+        representativeWeekIndex,
+        startWeekIndex,
+      });
+    }
+  }
+
+  return cells;
+}
+
+export function getFeltStats(
+  birthDateInput: string,
+  lifeExpectancy: number,
+  referenceDate = new Date(),
+): FeltStats {
+  const stats = getLifeStats(birthDateInput, lifeExpectancy, referenceDate);
+
+  if (stats.totalWeeks === 0) {
+    return {
+      totalWeight: 0,
+      elapsedWeight: 0,
+      remainingWeight: 0,
+      progressPercent: 0,
+      currentWeekIndex: 0,
+      currentYearIndex: 0,
+    };
+  }
+
+  const elapsedYears = Math.floor(stats.elapsedWeeks / 52);
+  const elapsedPartialWeeks = stats.elapsedWeeks % 52;
+  const elapsedWeight =
+    52 * getHarmonicSum(elapsedYears) +
+    (elapsedPartialWeeks > 0 ? elapsedPartialWeeks / (elapsedYears + 1) : 0);
+  const totalWeight = 52 * getHarmonicSum(lifeExpectancy);
+
+  return {
+    totalWeight,
+    elapsedWeight,
+    remainingWeight: Math.max(totalWeight - elapsedWeight, 0),
+    progressPercent: totalWeight === 0 ? 0 : Math.min((elapsedWeight / totalWeight) * 100, 100),
+    currentWeekIndex: stats.currentWeekIndex,
+    currentYearIndex: stats.currentYearIndex,
   };
 }
 

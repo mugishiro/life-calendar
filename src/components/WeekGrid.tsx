@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { memo, useEffect, useRef } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 
 import type { AppTheme } from '../theme';
@@ -18,7 +18,7 @@ interface WeekGridProps {
 const GAP = 2;
 const ROW_LABEL_WIDTH = 30;
 
-export function WeekGrid({
+function WeekGridComponent({
   totalYears,
   elapsedWeeks,
   currentWeekIndex,
@@ -127,6 +127,18 @@ export function WeekGrid({
     </View>
   );
 }
+
+export const WeekGrid = memo(
+  WeekGridComponent,
+  (prevProps, nextProps) =>
+    prevProps.totalYears === nextProps.totalYears &&
+    prevProps.elapsedWeeks === nextProps.elapsedWeeks &&
+    prevProps.currentWeekIndex === nextProps.currentWeekIndex &&
+    prevProps.currentYearIndex === nextProps.currentYearIndex &&
+    prevProps.selectedWeekIndex === nextProps.selectedWeekIndex &&
+    prevProps.weekMemos === nextProps.weekMemos &&
+    prevProps.theme === nextProps.theme,
+);
 
 const styles = StyleSheet.create({
   container: {

@@ -10,7 +10,7 @@ export const LANGUAGE_OPTIONS: Array<{ code: LanguageCode; label: string }> = [
   { code: 'hi', label: 'हिन्दी' },
 ];
 
-interface Translations {
+export interface Translations {
   appTitle: string;
   appSubtitle: string;
   alertSaveFailedTitle: string;
@@ -50,7 +50,8 @@ interface Translations {
   settingsLifeExpectancyInvalid: string;
   mainLeft: string;
   mainProgress: string;
-  mainModeLife: string;
+  mainModeReal: string;
+  mainModeFelt: string;
   mainModeYear: string;
   mainModeClock: string;
   mainClockSecond: string;
@@ -109,8 +110,9 @@ const TRANSLATIONS: Record<LanguageCode, Translations> = {
     settingsLifeExpectancyInvalid: '想定寿命は 1〜120 歳の範囲で設定してください。',
     mainLeft: '残り',
     mainProgress: '進捗',
-    mainModeLife: 'Life',
-    mainModeYear: 'Year',
+    mainModeReal: '実時間',
+    mainModeFelt: '体感',
+    mainModeYear: '年別',
     mainModeClock: 'Clock',
     mainClockSecond: '秒',
     mainClockMinute: '分',
@@ -166,7 +168,8 @@ const TRANSLATIONS: Record<LanguageCode, Translations> = {
     settingsLifeExpectancyInvalid: 'Life expectancy must be between 1 and 120.',
     mainLeft: 'Left',
     mainProgress: 'Progress',
-    mainModeLife: 'Life',
+    mainModeReal: 'Real',
+    mainModeFelt: 'Felt',
     mainModeYear: 'Year',
     mainModeClock: 'Clock',
     mainClockSecond: 'Second',
@@ -223,8 +226,9 @@ const TRANSLATIONS: Record<LanguageCode, Translations> = {
     settingsLifeExpectancyInvalid: '预期寿命必须在 1 到 120 之间。',
     mainLeft: '剩余',
     mainProgress: '进度',
-    mainModeLife: 'Life',
-    mainModeYear: 'Year',
+    mainModeReal: '实际',
+    mainModeFelt: '体感',
+    mainModeYear: '年别',
     mainModeClock: 'Clock',
     mainClockSecond: '秒',
     mainClockMinute: '分',
@@ -280,8 +284,9 @@ const TRANSLATIONS: Record<LanguageCode, Translations> = {
     settingsLifeExpectancyInvalid: 'La esperanza de vida debe estar entre 1 y 120.',
     mainLeft: 'Restan',
     mainProgress: 'Progreso',
-    mainModeLife: 'Life',
-    mainModeYear: 'Year',
+    mainModeReal: 'Real',
+    mainModeFelt: 'Percibido',
+    mainModeYear: 'Año',
     mainModeClock: 'Clock',
     mainClockSecond: 'Segundo',
     mainClockMinute: 'Minuto',
@@ -337,8 +342,9 @@ const TRANSLATIONS: Record<LanguageCode, Translations> = {
     settingsLifeExpectancyInvalid: 'अनुमानित आयु 1 से 120 के बीच होनी चाहिए।',
     mainLeft: 'शेष',
     mainProgress: 'प्रगति',
-    mainModeLife: 'Life',
-    mainModeYear: 'Year',
+    mainModeReal: 'वास्तविक',
+    mainModeFelt: 'अनुभव',
+    mainModeYear: 'वर्ष',
     mainModeClock: 'Clock',
     mainClockSecond: 'सेकंड',
     mainClockMinute: 'मिनट',

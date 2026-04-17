@@ -3,6 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getPreferredLanguage, isLanguage } from '../i18n';
 import type { UserSettings, WeekMemoMap } from '../types';
 import { isValidLifeExpectancy, parseBirthDate } from './lifeCalendar';
+import { normalizeViewMode } from './viewMode';
 
 const USER_SETTINGS_STORAGE_KEY = 'life-calendar:user-settings';
 const WEEK_MEMOS_STORAGE_KEY = 'life-calendar:week-memos';
@@ -10,10 +11,6 @@ const MAX_MEMO_LENGTH = 200;
 
 function isTheme(value: unknown): value is UserSettings['theme'] {
   return value === 'light' || value === 'dark';
-}
-
-function isViewMode(value: unknown): value is UserSettings['viewMode'] {
-  return value === 'life' || value === 'year';
 }
 
 function normalizeUserSettings(value: unknown): UserSettings | null {
@@ -48,7 +45,7 @@ function normalizeUserSettings(value: unknown): UserSettings | null {
         ? candidate.selectedCalendarYear
         : new Date().getFullYear(),
     theme: candidate.theme,
-    viewMode: isViewMode(candidate.viewMode) ? candidate.viewMode : 'life',
+    viewMode: normalizeViewMode(candidate.viewMode),
   };
 }
 

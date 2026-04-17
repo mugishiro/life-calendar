@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import type { AppTheme } from '../theme';
@@ -66,7 +67,7 @@ function getChipTextColor(
   return theme.colors.primaryText;
 }
 
-export function YearWeekGrid({
+function YearWeekGridComponent({
   onSelectWeek,
   selectedWeekIndex,
   theme,
@@ -180,6 +181,15 @@ export function YearWeekGrid({
     </ScrollView>
   );
 }
+
+export const YearWeekGrid = memo(
+  YearWeekGridComponent,
+  (prevProps, nextProps) =>
+    prevProps.selectedWeekIndex === nextProps.selectedWeekIndex &&
+    prevProps.theme === nextProps.theme &&
+    prevProps.weeks === nextProps.weeks &&
+    prevProps.weekMemos === nextProps.weekMemos,
+);
 
 const styles = StyleSheet.create({
   content: {

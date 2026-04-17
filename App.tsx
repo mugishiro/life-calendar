@@ -2,6 +2,8 @@ import 'expo-dev-client';
 import { StatusBar } from 'expo-status-bar';
 import { Alert } from 'react-native';
 import { useEffect, useState } from 'react';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { MainScreen } from './src/screens/MainScreen';
 import { OnboardingScreen } from './src/screens/OnboardingScreen';
@@ -17,7 +19,6 @@ type AppScreen = 'onboarding' | 'main' | 'settings';
 export default function App() {
   const [isBooting, setIsBooting] = useState(true);
   const [screen, setScreen] = useState<AppScreen>('onboarding');
-  const [saveFlashMessage, setSaveFlashMessage] = useState<string | null>(null);
   const [settings, setSettings] = useState<UserSettings | null>(null);
 
   useEffect(() => {
@@ -42,53 +43,59 @@ export default function App() {
     };
   }, []);
 
-  async function handleStart(nextSettings: UserSettings) {
+  async function persistSettings(
+    nextSettings: UserSettings,
+    onSuccess: () => void,
+  ) {
     const t = getTranslations(nextSettings.language);
+
     try {
       await saveUserSettings(nextSettings);
-      setSettings(nextSettings);
-      setScreen('main');
+      onSuccess();
     } catch (error) {
       Alert.alert(t.alertSaveFailedTitle, t.alertSettingsSaveFailedMessage);
     }
   }
 
-  async function handleUpdateSettings(nextSettings: UserSettings) {
-    const t = getTranslations(nextSettings.language);
-    try {
-      await saveUserSettings(nextSettings);
+  async function handleStart(nextSettings: UserSettings) {
+    await persistSettings(nextSettings, () => {
       setSettings(nextSettings);
-    } catch (error) {
-      Alert.alert(t.alertSaveFailedTitle, t.alertSettingsSaveFailedMessage);
-    }
+      setScreen('main');
+    });
+  }
+
+  async function handleUpdateSettings(nextSettings: UserSettings) {
+    await persistSettings(nextSettings, () => {
+      setSettings(nextSettings);
+    });
   }
 
   const theme = getTheme(settings?.theme ?? 'light');
 
   return (
-    <>
-      <StatusBar style={theme.mode === 'dark' ? 'light' : 'dark'} />
-      {isBooting ? <SplashScreen /> : null}
-      {!isBooting && screen === 'onboarding' ? (
-        <OnboardingScreen onSubmit={handleStart} />
-      ) : null}
-      {!isBooting && screen === 'main' && settings ? (
-        <MainScreen
-          flashMessage={saveFlashMessage}
-          onChangeSettings={handleUpdateSettings}
-          onDismissFlashMessage={() => setSaveFlashMessage(null)}
-          settings={settings}
-          theme={theme}
-          onOpenSettings={() => setScreen('settings')}
-        />
-      ) : null}
-      {!isBooting && screen === 'settings' && settings ? (
-        <SettingsScreen
-          settings={settings}
-          onBack={() => setScreen('main')}
-          onChange={handleUpdateSettings}
-        />
-      ) : null}
-    </>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <BottomSheetModalProvider>
+        <StatusBar style={theme.mode === 'dark' ? 'light' : 'dark'} />
+        {isBooting ? <SplashScreen /> : null}
+        {!isBooting && screen === 'onboarding' ? (
+          <OnboardingScreen onSubmit={handleStart} />
+        ) : null}
+        {!isBooting && screen === 'main' && settings ? (
+          <MainScreen
+            onChangeSettings={handleUpdateSettings}
+            settings={settings}
+            theme={theme}
+            onOpenSettings={() => setScreen('settings')}
+          />
+        ) : null}
+        {!isBooting && screen === 'settings' && settings ? (
+          <SettingsScreen
+            settings={settings}
+            onBack={() => setScreen('main')}
+            onChange={handleUpdateSettings}
+          />
+        ) : null}
+      </BottomSheetModalProvider>
+    </GestureHandlerRootView>
   );
 }
